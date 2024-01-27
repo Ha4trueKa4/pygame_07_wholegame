@@ -2,6 +2,8 @@ import os
 import sys
 import pygame
 
+game_lvl = input('Введите имя файла с уровнем: ')
+
 pygame.init()
 size = width, height = 550, 550
 screen = pygame.display.set_mode(size)
@@ -14,13 +16,16 @@ def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
     if not os.path.isfile(fullname):
         print(f"Файл с изображением '{fullname}' не найден")
-        sys.exit()
+        terminate()
     image = pygame.image.load(fullname)
     return image
 
 
 def load_level(filename):
     filename = "data/" + filename
+    if not os.path.isfile(filename):
+        print(f'{filename} не существует')
+        sys.exit()
     with open(filename, 'r') as mapFile:
         level_map = [line.strip() for line in mapFile]
     max_width = max(map(len, level_map))
@@ -49,7 +54,6 @@ def start_screen():
 
 def main_screen():
     lvl = load_level('lvl.txt')
-    print(lvl)
     tile_images = {
         'wall': load_image('box.png'),
         'empty': load_image('grass.png')
@@ -116,7 +120,7 @@ def main_screen():
                     new_player = Player(x, y)
         return new_player, x, y
 
-    player, level_x, level_y = generate_level(load_level('lvl.txt'))
+    player, level_x, level_y = generate_level(load_level(game_lvl))
 
     while True:
         for event in pygame.event.get():
